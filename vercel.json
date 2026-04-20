@@ -19,11 +19,8 @@
     "buildCommand": "vite build",
     "outputDirectory": "public",
     "env": {
-        "APP_ENV": "production",
         "APP_TIMEZONE": "Asia/Jakarta",
         "APP_DEBUG": "false",
-        "APP_URL": "https://yourproductionurl.com",
-        "APP_KEY": "base64:JbbNC6IXjyMywh9yxPla8nffnzNOjeNWn3/wTnLEl00=",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
@@ -33,6 +30,5 @@
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
-        "DB_CONNECTION": "mysql"
     }
 }
