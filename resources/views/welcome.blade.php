@@ -228,7 +228,7 @@
 
                     Swal.fire({
                         title: 'Konfirmasi Pilihan',
-                        text: `Yakin ingin memilih ${candidateName}? Pilihan tidak bisa diubah.`,
+                        text: `Yakin ingin memilih ${candidateName}?`,
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonColor: '#D4AF37',
