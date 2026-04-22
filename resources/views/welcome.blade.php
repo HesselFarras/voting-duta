@@ -27,12 +27,18 @@
 </head>
 <body class="bg-physRed text-white selection:bg-physGold selection:text-black font-sans">
 
+    {{-- Logika Penentuan Waktu --}}
+    @php
+        $targetDate = \Carbon\Carbon::create(2026, 5, 3, 23, 59, 59);
+        $isClosed = \Carbon\Carbon::now()->greaterThan($targetDate);
+    @endphp
+
     <nav class="fixed top-0 right-0 p-6 md:p-8 z-50">
         @auth
             <div class="flex items-center space-x-4 bg-black/40 backdrop-blur-xl px-5 py-2.5 rounded-full border border-white/10 shadow-2xl">
                 <img src="{{ Auth::user()->avatar }}" class="w-8 h-8 rounded-full border border-physGold/50" alt="avatar">
                 <div class="hidden md:block text-right">
-                    <p class="text-[10px] text-white/50 uppercase tracking-widest leading-none mb-1">Logged in as</p>
+                    <p class="text-[10px] text-white/50 uppercase tracking-widest leading-none mb-1 text-right">Logged in as</p>
                     <p class="text-xs font-bold tracking-wider leading-none">{{ Auth::user()->name }}</p>
                 </div>
                 <div class="h-4 w-[1px] bg-white/20 mx-2"></div>
@@ -73,7 +79,9 @@
                 </div>
                 <div>
                     <span class="block text-[10px] uppercase tracking-[0.4em] text-white/50 mb-2">Sisa Waktu</span>
-                    <div id="timer" class="text-3xl font-bold tracking-tighter text-physGold font-serif">00:00:00:00</div>
+                    <div id="timer" class="text-3xl font-bold tracking-tighter text-physGold font-serif">
+                        @if($isClosed) VOTING CLOSED @else 00:00:00:00 @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,8 +121,12 @@
                             <p class="text-[9px] tracking-[0.2em] text-physGold/60 uppercase mb-8">Angkatan {{ $candidate->angkatan }}</p>
 
                             @auth
-                                @if(Auth::user()->vote)
-                                    <div class="w-full py-4 rounded-xl border border-white/10 bg-white/5">
+                                @if($isClosed)
+                                    <div class="w-full py-4 rounded-xl border border-physGold/20 bg-black/40 text-center">
+                                        <span class="text-[10px] uppercase tracking-[0.5em] text-physGold font-black">Voting Berakhir</span>
+                                    </div>
+                                @elseif(Auth::user()->vote)
+                                    <div class="w-full py-4 rounded-xl border border-white/10 bg-white/5 text-center">
                                         <span class="text-[10px] uppercase tracking-[0.5em] text-white/20 font-black">Suara Terkunci</span>
                                     </div>
                                 @else
@@ -146,20 +158,20 @@
                 <h2 class="text-3xl md:text-5xl font-serif text-white mb-4 italic">Live <span class="text-physGold">Leaderboard</span></h2>
                 <div class="h-1 w-20 bg-physGold mx-auto rounded-full"></div>
             </div>
-            <div class="bg-black/30 p-8 rounded-[2.5rem] border border-white/10 shadow-2xl">
-                <canvas id="leaderboardChart" height="150"></canvas>
+            <div class="bg-black/30 p-4 md:p-8 rounded-[2.5rem] border border-white/10 shadow-2xl h-[350px] md:h-[450px]">
+                <canvas id="leaderboardChart"></canvas>
             </div>
         </div>
     </section>
 
     <footer class="py-20 text-center bg-black/40 border-t border-white/10">
-        <p class="text-white/20 text-[10px] uppercase tracking-[0.5em] font-bold mb-2">&copy; 2026 Pendidikan Fisika • Elegansi & Edukasi</p>
-        <span class="text-white/20 uppercase tracking-[0.5em] text-[10px]">Created by <a href="https://instagram.com/binatangsudahjinak" target="_blank" class="text-white/20 hover:underline">@binatangsudahjinak</a></span>
+        <p class="text-white/20 text-[10px] uppercase tracking-[0.5em] font-bold mb-2">&copy; 2026 Pendidikan Fisika</p>
+        <span class="text-white/20 uppercase tracking-[0.5em] text-[10px]">Created by <a href="https://instagram.com/binatangsudahjinak" target="_blank" class="text-white/20 underline hover:text-physGold">@binatangsudahjinak</a></span>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. CHART LOGIC
+            // 1. CHART LOGIC (CLEAN X-AXIS, RICH TOOLTIP)
             const ctx = document.getElementById('leaderboardChart').getContext('2d');
             new Chart(ctx, {
                 type: 'bar',
@@ -171,20 +183,44 @@
                         backgroundColor: '#D4AF37',
                         borderColor: '#D4AF37',
                         borderWidth: 1,
-                        borderRadius: 10,
+                        borderRadius: 8,
                     }]
                 },
                 options: {
                     responsive: true,
-                    plugins: { legend: { display: false } },
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1a1a1a',
+                            titleFont: { family: 'Inter', size: 14, weight: 'bold' },
+                            bodyFont: { family: 'Inter', size: 13 },
+                            padding: 12,
+                            displayColors: false,
+                            borderColor: '#D4AF37',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' Suara';
+                                }
+                            }
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#fff' } },
-                        x: { grid: { display: false }, ticks: { color: '#fff' } }
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
+                            ticks: { color: 'rgba(255, 255, 255, 0.5)', font: { size: 10 } } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { display: false } // Nama di bawah hilang sesuai request
+                        }
                     }
                 }
             });
 
-            // 2. VOTE LOGIC (EVENT LISTENER - PALING AMAN)
+            // 2. VOTE LOGIC
             document.querySelectorAll('.btn-vote').forEach(button => {
                 button.addEventListener('click', function() {
                     const form = this.closest('form');
@@ -192,7 +228,7 @@
 
                     Swal.fire({
                         title: 'Konfirmasi Pilihan',
-                        text: `Yakin ingin memilih ${candidateName}?`,
+                        text: `Yakin ingin memilih ${candidateName}? Pilihan tidak bisa diubah.`,
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonColor: '#D4AF37',
@@ -222,11 +258,17 @@
                 const targetDate = new Date("May 3, 2026 23:59:59").getTime();
                 const now = new Date().getTime();
                 const diff = targetDate - now;
-                if (diff <= 0) { document.getElementById('timer').innerHTML = "VOTING CLOSED"; return; }
+                
+                if (diff <= 0) { 
+                    document.getElementById('timer').innerHTML = "VOTING CLOSED"; 
+                    return; 
+                }
+                
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const secs = Math.floor((diff % (1000 * 60)) / 1000);
+                
                 document.getElementById('timer').innerHTML = `${days}d : ${hours}h : ${mins}m : ${secs < 10 ? '0'+secs : secs}s`;
             }
             setInterval(updateTimer, 1000);
@@ -234,6 +276,7 @@
         });
     </script>
 
+    {{-- Session Notifications --}}
     @if(session('success'))
         <script>Swal.fire({ icon: 'success', title: 'Berhasil!', text: "{{ session('success') }}", background: '#1a1a1a', color: '#ffffff', confirmButtonColor: '#D4AF37' });</script>
     @endif
