@@ -41,17 +41,28 @@
                     <p class="text-[10px] text-white/50 uppercase tracking-widest leading-none mb-1 text-right">Logged in as</p>
                     <p class="text-xs font-bold tracking-wider leading-none">{{ Auth::user()->name }}</p>
                 </div>
-                <div class="h-4 w-[1px] bg-white/20 mx-2"></div>
-                <form action="{{ route('logout') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="text-[10px] uppercase tracking-widest text-physGold hover:text-white transition-colors font-bold">Logout</button>
-                </form>
+                
+                {{-- Hanya tampilkan Logout jika NIM belum diisi --}}
+                @if(!Auth::user()->nim)
+                    <div class="h-4 w-[1px] bg-white/20 mx-2"></div>
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="text-[10px] uppercase tracking-widest text-physGold hover:text-white transition-colors font-bold">Logout</button>
+                    </form>
+                @endif
             </div>
         @else
-            <a href="/auth/google" class="group relative inline-flex items-center space-x-3 bg-physGold text-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white transition-all duration-500 shadow-2xl shadow-physGold/20">
-                <span>Login Google</span>
-                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="currentColor" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h4.74c-.2 1.06-1.2 3.12-4.74 3.12-3.07 0-5.57-2.54-5.57-5.68s2.5-5.68 5.57-5.68c1.75 0 2.92.74 3.59 1.39l2.59-2.5c-1.66-1.55-3.82-2.5-6.18-2.5C7.22 2.35 3 6.57 3 11.75s4.22 9.4 8.78 9.4c4.77 0 7.94-3.35 7.94-8.08 0-.54-.06-1-.16-1.42l-7.08.02z"/></svg>
-            </a>
+            {{-- Tombol Login hilang jika device sudah terkunci cookie --}}
+            @if(!request()->cookie('device_locked'))
+                <a href="/auth/google" class="group relative inline-flex items-center space-x-3 bg-physGold text-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white transition-all duration-500 shadow-2xl shadow-physGold/20">
+                    <span>Login Google</span>
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="currentColor" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h4.74c-.2 1.06-1.2 3.12-4.74 3.12-3.07 0-5.57-2.54-5.57-5.68s2.5-5.68 5.57-5.68c1.75 0 2.92.74 3.59 1.39l2.59-2.5c-1.66-1.55-3.82-2.5-6.18-2.5C7.22 2.35 3 6.57 3 11.75s4.22 9.4 8.78 9.4c4.77 0 7.94-3.35 7.94-8.08 0-.54-.06-1-.16-1.42l-7.08.02z"/></svg>
+                </a>
+            @else
+                <div class="bg-black/60 border border-white/10 px-6 py-3 rounded-full backdrop-blur-md">
+                    <span class="text-[10px] uppercase font-bold text-physGold tracking-widest italic">Device Locked</span>
+                </div>
+            @endif
         @endauth
     </nav>
 
@@ -169,9 +180,32 @@
         <span class="text-white/20 uppercase tracking-[0.5em] text-[10px]">Created by <a href="https://instagram.com/binatangsudahjinak" target="_blank" class="text-white/20 underline hover:text-physGold">@binatangsudahjinak</a></span>
     </footer>
 
+    {{-- MODAL VERIFIKASI NIM --}}
+    @auth
+        @if(!Auth::user()->nim)
+        <div class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[100] flex items-center justify-center p-6 text-center">
+            <div class="max-w-md w-full">
+                <h2 class="font-serif text-4xl text-physGold italic mb-4">Verifikasi NIM</h2>
+                <div class="h-[1px] w-12 bg-physGold mx-auto mb-6"></div>
+                <p class="text-white/40 text-[10px] uppercase tracking-[0.3em] mb-10">Gunakan NIM Pendidikan Fisika Anda</p>
+                
+                <form action="{{ route('verify.nim') }}" method="POST" class="space-y-8">
+                    @csrf
+                    <input type="text" name="nim" placeholder="2280XXXXXXXX" required
+                           class="w-full bg-transparent border-b-2 border-white/10 focus:border-physGold py-4 text-center text-3xl outline-none transition-all font-bold tracking-widest text-white uppercase placeholder:text-white/5">
+                    
+                    <button type="submit" class="w-full bg-physGold text-black py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] hover:bg-white transition-all shadow-2xl shadow-physGold/20">
+                        Konfirmasi Identitas
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endif
+    @endauth
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. CHART LOGIC (CLEAN X-AXIS, RICH TOOLTIP)
+            // 1. CHART LOGIC
             const ctx = document.getElementById('leaderboardChart').getContext('2d');
             new Chart(ctx, {
                 type: 'bar',
@@ -214,7 +248,7 @@
                         },
                         x: { 
                             grid: { display: false }, 
-                            ticks: { display: false } // Nama di bawah hilang sesuai request
+                            ticks: { display: false } 
                         }
                     }
                 }
@@ -243,6 +277,7 @@
                                 title: 'Memproses...',
                                 allowOutsideClick: false,
                                 showConfirmButton: false,
+                                shadow: 'none',
                                 didOpen: () => { Swal.showLoading() },
                                 background: '#1a1a1a',
                                 color: '#ffffff'
@@ -255,7 +290,7 @@
 
             // 3. TIMER LOGIC
             function updateTimer() {
-                const targetDate = new Date("May 3, 2026 23:59:59").getTime();
+                const targetDate = new Date("May 3, 2026 14:59:59").getTime();
                 const now = new Date().getTime();
                 const diff = targetDate - now;
                 

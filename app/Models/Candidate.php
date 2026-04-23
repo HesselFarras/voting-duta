@@ -12,6 +12,7 @@ class Candidate extends Model
 
     // Kolom yang boleh diisi manual
     protected $fillable = ['name', 'nim', 'angkatan', 'photo'];
+    public $timestamps = false;
 
     /**
      * Relasi: Satu kandidat bisa memiliki banyak suara (votes)

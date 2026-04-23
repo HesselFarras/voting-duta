@@ -53,4 +53,12 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/candidate/{id}', [AdminController::class, 'destroy']);
 });
 
+Route::post('/verify-nim', [VoteController::class, 'verifyNim'])->name('verify.nim');
+
+Route::put('/admin/candidate/{id}', [AdminController::class, 'update'])->name('admin.candidate.update');
+
+Route::get('/', [App\Http\Controllers\VoteController::class, 'index']);
+
+Route::post('/admin/candidate/reset/{id}', [AdminController::class, 'resetPhoto']);
+
 require __DIR__.'/auth.php';

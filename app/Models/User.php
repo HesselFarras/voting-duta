@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-// Tambahkan google_id dan avatar ke dalam Fillable agar bisa disimpan
-#[Fillable(['name', 'email', 'password', 'google_id', 'avatar'])]
+// Tambahkan 'nim' ke dalam array Fillable
+#[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'nim'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
