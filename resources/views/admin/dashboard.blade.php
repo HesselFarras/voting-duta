@@ -101,14 +101,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const id = this.getAttribute('data-id');
             const name = this.getAttribute('data-name');
 
-            // Set data ke form
             editForm.action = "/admin/candidate/" + id;
             displayName.value = name;
             
-            // Aktifkan input file
             photoInput.disabled = false;
             
-            // Reset button state (biar harus pilih file dulu)
             btnUpdate.disabled = true;
             btnUpdate.className = "w-full bg-white/10 text-white/20 py-5 rounded-2xl font-bold text-[10px] uppercase tracking-widest cursor-not-allowed";
             btnUpdate.innerText = "Pilih Foto Baru";
@@ -117,12 +114,34 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 2. Aktifkan tombol cuma pas file terpilih
+    // 2. Handle Ganti File + Cek Ukuran (Max 2MB)
     photoInput.addEventListener('change', function() {
-        if (this.files && this.files.length > 0) {
-            btnUpdate.disabled = false;
-            btnUpdate.className = "w-full bg-physGold text-black py-5 rounded-2xl font-bold text-[10px] uppercase tracking-widest hover:bg-white shadow-lg shadow-physGold/20 transition-all cursor-pointer";
-            btnUpdate.innerText = "Simpan Perubahan";
+        if (this.files && this.files[0]) {
+            const fileSize = this.files[0].size;
+            const maxSize = 2 * 1024 * 1024; // 2MB dalam Bytes
+
+            if (fileSize > maxSize) {
+                // Notifikasi Alert kalo lebih dari 2MB
+                Swal.fire({
+                    icon: 'error',
+                    title: 'File Kegedean!',
+                    text: `Ukuran foto lu ${(fileSize / (1024 * 1024)).toFixed(2)} MB. Maksimal 2MB aja co`,
+                    background: '#1a1a1a',
+                    color: '#fff',
+                    confirmButtonColor: '#ef4444'
+                });
+
+                // Reset input dan matikan tombol
+                this.value = ""; 
+                btnUpdate.disabled = true;
+                btnUpdate.className = "w-full bg-white/10 text-white/20 py-5 rounded-2xl font-bold text-[10px] uppercase tracking-widest cursor-not-allowed";
+                btnUpdate.innerText = "FILE KEGEDEAN (>2MB)";
+            } else {
+                // File aman (di bawah 2MB)
+                btnUpdate.disabled = false;
+                btnUpdate.className = "w-full bg-physGold text-black py-5 rounded-2xl font-bold text-[10px] uppercase tracking-widest hover:bg-white shadow-lg shadow-physGold/20 transition-all cursor-pointer";
+                btnUpdate.innerText = "Simpan Perubahan";
+            }
         }
     });
 
