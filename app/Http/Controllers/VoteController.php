@@ -16,11 +16,12 @@ class VoteController extends Controller
      */
     public function index()
     {
-        // Ambil data kandidat, urutkan berdasarkan ID (biar posisinya tetap)
-        // Kalau mau urut Abjad, ganti 'id' jadi 'name'
-        $candidates = \App\Models\Candidate::orderBy('id', 'asc')->get();
+        // Menginstruksikan browser/Vercel untuk tidak menyimpan cache
+        header("Cache-Control: no-cache, no-store, must-revalidate");
+        header("Pragma: no-cache");
+        header("Expires: 0");
 
-        // Lempar ke view welcome (atau sesuaikan nama file blade halaman depan lo)
+        $candidates = \App\Models\Candidate::withCount('votes')->orderBy('id', 'asc')->get();
         return view('welcome', compact('candidates'));
     }
     public function verifyNim(Request $request)
