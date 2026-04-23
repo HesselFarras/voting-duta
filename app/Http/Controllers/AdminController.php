@@ -11,12 +11,18 @@ class AdminController extends Controller
 {
     public function index()
     {
-        // Pengecekan Admin
-        if (Auth::user()->email !== 'hesselfaras39@gmail.com') {
-            abort(403, 'Akses ditolak!');
+        // List email yang boleh jadi admin
+        $adminEmails = [
+            'hesselfaras39@gmail.com', // Email lo
+            'hesselfarras1@gmail.com',      // Email temen lo
+            'firazn06@gmail.com'   // Tambahin terus ke bawah...
+        ];
+
+        // Cek apakah email user yang login ada di daftar di atas
+        if (!in_array(Auth::user()->email, $adminEmails)) {
+            abort(403, 'Lau siape pruy???');
         }
 
-        // Pakai orderBy biar urutan kandidat tetap konsisten (nggak pindah ke bawah pas diupdate)
         $candidates = Candidate::withCount('votes')
                         ->orderBy('id', 'asc')
                         ->get();

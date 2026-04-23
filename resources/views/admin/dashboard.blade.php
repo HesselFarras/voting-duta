@@ -6,6 +6,7 @@
     <title>Admin Panel - Duta Fisika</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = { theme: { extend: { colors: { physGold: '#D4AF37' } } } }
