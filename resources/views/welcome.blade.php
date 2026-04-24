@@ -190,10 +190,10 @@
                 <div class="h-[1px] w-12 bg-physGold mx-auto mb-6"></div>
                 <p class="text-white/40 text-[10px] uppercase tracking-[0.3em] mb-10">Gunakan NIM Pendidikan Fisika Anda</p>
                 
-                <form action="{{ route('verify.nim') }}" method="POST" class="space-y-8">
+                <form id="nimForm" action="{{ route('verify.nim') }}" method="POST" class="space-y-8">
                     @csrf
-                    <input type="text" name="nim" placeholder="2280XXXXXXXX" required
-                           class="w-full bg-transparent border-b-2 border-white/10 focus:border-physGold py-4 text-center text-3xl outline-none transition-all font-bold tracking-widest text-white uppercase placeholder:text-white/5">
+                    <input type="text" id="nimInput" name="nim" placeholder="2280XXXXXXXX" required
+                        class="w-full bg-transparent border-b-2 border-white/10 focus:border-physGold py-4 text-center text-3xl outline-none transition-all font-bold tracking-widest text-white uppercase placeholder:text-white/5">
                     
                     <button type="submit" class="w-full bg-physGold text-black py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] hover:bg-white transition-all shadow-2xl shadow-physGold/20">
                         Konfirmasi Identitas
@@ -205,112 +205,134 @@
     @endauth
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 1. CHART LOGIC
-            const ctx = document.getElementById('leaderboardChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($candidates->pluck('name')) !!},
-                    datasets: [{
-                        label: 'Perolehan Suara',
-                        data: {!! json_encode($candidates->pluck('votes_count')) !!},
-                        backgroundColor: '#D4AF37',
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. CHART LOGIC
+        const ctx = document.getElementById('leaderboardChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($candidates->pluck('name')) !!},
+                datasets: [{
+                    label: 'Perolehan Suara',
+                    data: {!! json_encode($candidates->pluck('votes_count')) !!},
+                    backgroundColor: '#D4AF37',
+                    borderColor: '#D4AF37',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1a1a1a',
+                        titleFont: { family: 'Inter', size: 14, weight: 'bold' },
+                        bodyFont: { family: 'Inter', size: 13 },
+                        padding: 12,
+                        displayColors: false,
                         borderColor: '#D4AF37',
                         borderWidth: 1,
-                        borderRadius: 8,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1a1a1a',
-                            titleFont: { family: 'Inter', size: 14, weight: 'bold' },
-                            bodyFont: { family: 'Inter', size: 13 },
-                            padding: 12,
-                            displayColors: false,
-                            borderColor: '#D4AF37',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function(context) {
-                                    return context.parsed.y + ' Suara';
-                                }
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' Suara';
                             }
                         }
+                    }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
+                        ticks: { color: 'rgba(255, 255, 255, 0.5)', font: { size: 10 } } 
                     },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
-                            ticks: { color: 'rgba(255, 255, 255, 0.5)', font: { size: 10 } } 
-                        },
-                        x: { 
-                            grid: { display: false }, 
-                            ticks: { display: false } 
-                        }
+                    x: { 
+                        grid: { display: false }, 
+                        ticks: { display: false } 
                     }
                 }
-            });
+            }
+        });
 
-            // 2. VOTE LOGIC
-            document.querySelectorAll('.btn-vote').forEach(button => {
-                button.addEventListener('click', function() {
-                    const form = this.closest('form');
-                    const candidateName = this.getAttribute('data-name');
+        // 2. VOTE LOGIC
+        document.querySelectorAll('.btn-vote').forEach(button => {
+            button.addEventListener('click', function() {
+                const form = this.closest('form');
+                const candidateName = this.getAttribute('data-name');
 
-                    Swal.fire({
-                        title: 'Konfirmasi Pilihan',
-                        text: `Yakin ingin memilih ${candidateName}?`,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#D4AF37',
-                        cancelButtonColor: '#7D161A',
-                        confirmButtonText: 'Ya, Pilih!',
-                        cancelButtonText: 'Batal',
-                        background: '#1a1a1a',
-                        color: '#ffffff'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire({
-                                title: 'Memproses...',
-                                allowOutsideClick: false,
-                                showConfirmButton: false,
-                                shadow: 'none',
-                                didOpen: () => { Swal.showLoading() },
-                                background: '#1a1a1a',
-                                color: '#ffffff'
-                            });
-                            form.submit();
-                        }
-                    });
+                Swal.fire({
+                    title: 'Konfirmasi Pilihan',
+                    text: `Yakin ingin memilih ${candidateName}?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#D4AF37',
+                    cancelButtonColor: '#7D161A',
+                    confirmButtonText: 'Ya, Pilih!',
+                    cancelButtonText: 'Batal',
+                    background: '#1a1a1a',
+                    color: '#ffffff'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Memproses...',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            didOpen: () => { Swal.showLoading() },
+                            background: '#1a1a1a',
+                            color: '#ffffff'
+                        });
+                        form.submit();
+                    }
                 });
             });
-
-            // 3. TIMER LOGIC
-            function updateTimer() {
-                const targetDate = new Date("May 3, 2026 14:59:59").getTime();
-                const now = new Date().getTime();
-                const diff = targetDate - now;
-                
-                if (diff <= 0) { 
-                    document.getElementById('timer').innerHTML = "VOTING CLOSED"; 
-                    return; 
-                }
-                
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const secs = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                document.getElementById('timer').innerHTML = `${days}d : ${hours}h : ${mins}m : ${secs < 10 ? '0'+secs : secs}s`;
-            }
-            setInterval(updateTimer, 1000);
-            updateTimer();
         });
-    </script>
+
+        // 3. NIM VALIDATION LOGIC (NEW)
+        const nimForm = document.querySelector('form[action="{{ route("verify.nim") }}"]');
+        if (nimForm) {
+            nimForm.addEventListener('submit', function(e) {
+                const nimInput = this.querySelector('input[name="nim"]');
+                const nimValue = nimInput.value.trim();
+
+                // Cek apakah diawali 2280
+                if (!nimValue.startsWith('2280')) {
+                    e.preventDefault(); // Stop form submit
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'NIM Tidak Valid!',
+                        text: 'Maaf, voting ini khusus mahasiswa Pendidikan Fisika.',
+                        background: '#1a1a1a',
+                        color: '#ffffff',
+                        confirmButtonColor: '#7D161A'
+                    });
+                }
+            });
+        }
+
+        // 4. TIMER LOGIC
+        function updateTimer() {
+            const targetDate = new Date("May 3, 2026 14:59:59").getTime();
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+            
+            if (diff <= 0) { 
+                document.getElementById('timer').innerHTML = "VOTING CLOSED"; 
+                return; 
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('timer').innerHTML = `${days}d : ${hours}h : ${mins}m : ${secs < 10 ? '0'+secs : secs}s`;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    });
+</script>
 
     {{-- Session Notifications --}}
     @if(session('success'))
