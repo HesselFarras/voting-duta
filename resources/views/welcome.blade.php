@@ -152,9 +152,16 @@
                                     </form>
                                 @endif
                             @else
-                                <a href="/auth/google" class="w-full block border border-physGold/50 text-physGold py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-physGold hover:text-black text-center transition-all duration-300">
-                                    Login to Vote
-                                </a>
+                                {{-- CEK DEVICE LOCK UNTUK GUEST --}}
+                                @if(request()->cookie('device_locked'))
+                                    <div class="w-full py-4 rounded-xl border border-physGold/20 bg-black/40 text-center backdrop-blur-md">
+                                        <span class="text-[10px] uppercase tracking-[0.5em] text-physGold font-black italic">Device Locked</span>
+                                    </div>
+                                @else
+                                    <a href="/auth/google" class="w-full block border border-physGold/50 text-physGold py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-physGold hover:text-black text-center transition-all duration-300">
+                                        Login to Vote
+                                    </a>
+                                @endif
                             @endauth
                         </div>
                     </div>
