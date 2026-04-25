@@ -177,7 +177,7 @@
     </section>
 
     <footer class="py-20 text-center bg-black/40 border-t border-white/10">
-        <p class="text-white/20 text-[10px] uppercase tracking-[0.5em] font-bold mb-2">&copy; 2026 Pendidikan Fisika</p>
+        <p class="text-white/20 text-[10px] uppercase tracking-[0.5em] font-bold mb-2">&copy; 2026 Himpunan Mahasiswa Pendidikan Fisika</p>
         <span class="text-white/20 uppercase tracking-[0.5em] text-[10px]">Created by <a href="https://instagram.com/binatangsudahjinak" target="_blank" class="text-white/20 underline hover:text-physGold">@binatangsudahjinak</a></span>
     </footer>
 
