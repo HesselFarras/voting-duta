@@ -321,7 +321,7 @@
 
         // 4. TIMER LOGIC
         function updateTimer() {
-            const targetDate = new Date("May 3, 2026 14:59:59").getTime();
+            const targetDate = new Date("May 2, 2026 11:59:59").getTime();
             const now = new Date().getTime();
             const diff = targetDate - now;
             

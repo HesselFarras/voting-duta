@@ -63,7 +63,7 @@ class VoteController extends Controller
     public function store($candidateId)
     {
         // 1. CEK WAKTU (Set ke Jakarta biar nggak selisih sama server)
-        $targetDate = Carbon::create(2026, 5, 3, 14, 59, 59, 'Asia/Jakarta');
+        $targetDate = Carbon::create(2026, 5, 2, 11, 59, 59, 'Asia/Jakarta');
         if (Carbon::now('Asia/Jakarta')->greaterThan($targetDate)) {
             return redirect()->back()->with('error', 'Mohon maaf, waktu voting telah resmi berakhir!');
         }
