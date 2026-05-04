@@ -55,10 +55,10 @@
         @else
             {{-- Tombol Login hilang jika device sudah terkunci cookie --}}
             @if(!request()->cookie('device_locked'))
-                <a href="/auth/google" class="group relative inline-flex items-center space-x-3 bg-physGold text-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white transition-all duration-500 shadow-2xl shadow-physGold/20">
+                <!-- <a href="/auth/google" class="group relative inline-flex items-center space-x-3 bg-physGold text-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white transition-all duration-500 shadow-2xl shadow-physGold/20">
                     <span>Login Google</span>
                     <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="currentColor" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h4.74c-.2 1.06-1.2 3.12-4.74 3.12-3.07 0-5.57-2.54-5.57-5.68s2.5-5.68 5.57-5.68c1.75 0 2.92.74 3.59 1.39l2.59-2.5c-1.66-1.55-3.82-2.5-6.18-2.5C7.22 2.35 3 6.57 3 11.75s4.22 9.4 8.78 9.4c4.77 0 7.94-3.35 7.94-8.08 0-.54-.06-1-.16-1.42l-7.08.02z"/></svg>
-                </a>
+                </a> -->
             @else
                 <div class="bg-black/60 border border-white/10 px-6 py-3 rounded-full backdrop-blur-md">
                     <span class="text-[10px] uppercase font-bold text-physGold tracking-widest italic">Device Locked</span>
@@ -158,9 +158,9 @@
                                         <span class="text-[10px] uppercase tracking-[0.5em] text-physGold font-black italic">Device Locked</span>
                                     </div>
                                 @else
-                                    <a href="/auth/google" class="w-full block border border-physGold/50 text-physGold py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-physGold hover:text-black text-center transition-all duration-300">
+                                    <!-- <a href="/auth/google" class="w-full block border border-physGold/50 text-physGold py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-physGold hover:text-black text-center transition-all duration-300">
                                         Login to Vote
-                                    </a>
+                                    </a> -->
                                 @endif
                             @endauth
                         </div>
