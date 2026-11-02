@@ -7,10 +7,6 @@ use App\Http\Controllers\GoogleController;
 use App\Models\Candidate;
 use App\Http\Controllers\AdminController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -21,14 +17,6 @@ Route::post('/vote/{candidateId}', [VoteController::class, 'store'])->middleware
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-Route::get('/', function () {
-    // Ambil semua data kandidat dari database
-    $candidates = Candidate::all(); 
-
-    // Kirim data ke view dengan nama 'candidates' (jamak)
-    return view('welcome', compact('candidates'));
-});
-
 Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
@@ -36,12 +24,6 @@ Route::post('/logout', function () {
     return redirect('/');
 })->name('logout');
 
-
-Route::get('/', function () {
-    // Mengambil data kandidat sekaligus menghitung total vote-nya
-    $candidates = Candidate::withCount('votes')->get(); 
-    return view('welcome', compact('candidates'));
-});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin-panel', [AdminController::class, 'index']);
@@ -53,7 +35,7 @@ Route::post('/verify-nim', [VoteController::class, 'verifyNim'])->name('verify.n
 
 Route::put('/admin/candidate/{id}', [AdminController::class, 'update'])->name('admin.candidate.update');
 
-Route::get('/', [App\Http\Controllers\VoteController::class, 'index']);
+Route::get('/', [App\Http\Controllers\VoteController::class, 'index'])->name('dashboard');
 
 Route::post('/admin/candidate/reset/{id}', [AdminController::class, 'resetPhoto']);
 
