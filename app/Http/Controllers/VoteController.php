@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Vote;
 use App\Models\User;
+use App\Models\Candidate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -62,10 +63,13 @@ class VoteController extends Controller
      */
     public function store($candidateId)
     {
-        // 1. CEK WAKTU (Set ke Jakarta biar nggak selisih sama server)
-        $targetDate = Carbon::create(2026, 5, 2, 11, 59, 59, 'Asia/Jakarta');
-        if (Carbon::now('Asia/Jakarta')->greaterThan($targetDate)) {
-            return redirect()->back()->with('error', 'Mohon maaf, waktu voting telah resmi berakhir!');
+        $deadline = Carbon::create(2026, 11, 12, 18, 11, 56, 'Asia/Jakarta');
+        if (Carbon::now('Asia/Jakarta')->greaterThanOrEqualTo($deadline)) {
+            return redirect()->back()->with('error', 'Waktu demo voting sudah berakhir.');
+        }
+
+        if (!Candidate::whereKey($candidateId)->exists()) {
+            return redirect()->back()->with('error', 'Kandidat tidak ditemukan.');
         }
 
         // 2. Cek login

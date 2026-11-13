@@ -28,10 +28,9 @@
 </head>
 <body class="bg-physRed text-white selection:bg-physGold selection:text-black font-sans">
 
-    {{-- Logika Penentuan Waktu --}}
     @php
-        $targetDate = \Carbon\Carbon::create(2026, 5, 3, 23, 59, 59);
-        $isClosed = \Carbon\Carbon::now()->greaterThan($targetDate);
+        $deadline = \Carbon\Carbon::create(2026, 11, 12, 18, 11, 56, 'Asia/Jakarta');
+        $isClosed = \Carbon\Carbon::now('Asia/Jakarta')->greaterThanOrEqualTo($deadline);
     @endphp
 
     <nav class="fixed top-0 right-0 p-6 md:p-8 z-50">
@@ -55,10 +54,10 @@
         @else
             {{-- Tombol Login hilang jika device sudah terkunci cookie --}}
             @if(!request()->cookie('device_locked'))
-                <!-- <a href="/auth/google" class="group relative inline-flex items-center space-x-3 bg-physGold text-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white transition-all duration-500 shadow-2xl shadow-physGold/20">
+                <a href="/auth/google" class="group relative inline-flex items-center space-x-3 bg-physGold text-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white transition-all duration-500 shadow-2xl shadow-physGold/20">
                     <span>Login Google</span>
                     <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="currentColor" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h4.74c-.2 1.06-1.2 3.12-4.74 3.12-3.07 0-5.57-2.54-5.57-5.68s2.5-5.68 5.57-5.68c1.75 0 2.92.74 3.59 1.39l2.59-2.5c-1.66-1.55-3.82-2.5-6.18-2.5C7.22 2.35 3 6.57 3 11.75s4.22 9.4 8.78 9.4c4.77 0 7.94-3.35 7.94-8.08 0-.54-.06-1-.16-1.42l-7.08.02z"/></svg>
-                </a> -->
+                </a>
             @else
                 <div class="bg-black/60 border border-white/10 px-6 py-3 rounded-full backdrop-blur-md">
                     <span class="text-[10px] uppercase font-bold text-physGold tracking-widest italic">Device Locked</span>
@@ -90,10 +89,8 @@
                     <span class="text-3xl font-bold tracking-tighter">{{ \App\Models\Vote::count() }}</span>
                 </div>
                 <div>
-                    <span class="block text-[10px] uppercase tracking-[0.4em] text-white/50 mb-2">Sisa Waktu</span>
-                    <div id="timer" class="text-3xl font-bold tracking-tighter text-physGold font-serif">
-                        @if($isClosed) VOTING CLOSED @else 00:00:00:00 @endif
-                    </div>
+                    <span class="block text-[10px] uppercase tracking-[0.4em] text-white/50 mb-2">Sisa Waktu Demo</span>
+                    <div id="timer" class="text-3xl font-bold tracking-tighter text-physGold font-serif">{{ $isClosed ? 'VOTING CLOSED' : '30:00' }}</div>
                 </div>
             </div>
         </div>
@@ -158,9 +155,9 @@
                                         <span class="text-[10px] uppercase tracking-[0.5em] text-physGold font-black italic">Device Locked</span>
                                     </div>
                                 @else
-                                    <!-- <a href="/auth/google" class="w-full block border border-physGold/50 text-physGold py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-physGold hover:text-black text-center transition-all duration-300">
+                                    <a href="/auth/google" class="w-full block border border-physGold/50 text-physGold py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-physGold hover:text-black text-center transition-all duration-300">
                                         Login to Vote
-                                    </a> -->
+                                    </a>
                                 @endif
                             @endauth
                         </div>
@@ -319,26 +316,25 @@
             });
         }
 
-        // 4. TIMER LOGIC
+        const deadline = new Date('2026-11-12T18:11:56+07:00').getTime();
+        const timer = document.getElementById('timer');
+
         function updateTimer() {
-            const targetDate = new Date("May 2, 2026 11:59:59").getTime();
-            const now = new Date().getTime();
-            const diff = targetDate - now;
-            
-            if (diff <= 0) { 
-                document.getElementById('timer').innerHTML = "VOTING CLOSED"; 
-                return; 
+            const remaining = deadline - Date.now();
+            if (remaining <= 0) {
+                timer.textContent = 'VOTING CLOSED';
+                return;
             }
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const secs = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            document.getElementById('timer').innerHTML = `${days}d : ${hours}h : ${mins}m : ${secs < 10 ? '0'+secs : secs}s`;
+
+            const totalSeconds = Math.floor(remaining / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            timer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
-        setInterval(updateTimer, 1000);
+
         updateTimer();
+        setInterval(updateTimer, 1000);
     });
 </script>
 
