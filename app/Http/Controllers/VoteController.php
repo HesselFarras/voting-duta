@@ -63,7 +63,7 @@ class VoteController extends Controller
      */
     public function store($candidateId)
     {
-        $deadline = Carbon::create(2026, 11, 12, 18, 11, 56, 'Asia/Jakarta');
+        $deadline = Carbon::create(2026, 11, 13, 19, 9, 17, 'Asia/Jakarta');
         if (Carbon::now('Asia/Jakarta')->greaterThanOrEqualTo($deadline)) {
             return redirect()->back()->with('error', 'Waktu demo voting sudah berakhir.');
         }

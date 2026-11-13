@@ -29,7 +29,7 @@
 <body class="bg-physRed text-white selection:bg-physGold selection:text-black font-sans">
 
     @php
-        $deadline = \Carbon\Carbon::create(2026, 11, 12, 18, 11, 56, 'Asia/Jakarta');
+        $deadline = \Carbon\Carbon::create(2026, 11, 13, 19, 9, 17, 'Asia/Jakarta');
         $isClosed = \Carbon\Carbon::now('Asia/Jakarta')->greaterThanOrEqualTo($deadline);
     @endphp
 
@@ -316,7 +316,7 @@
             });
         }
 
-        const deadline = new Date('2026-11-12T18:11:56+07:00').getTime();
+        const deadline = new Date('2026-11-13T19:09:17+07:00').getTime();
         const timer = document.getElementById('timer');
 
         function updateTimer() {

@@ -11,14 +11,18 @@ class GoogleController extends Controller
     // Arahkan user ke halaman Google
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->redirectUrl(url('/auth/google/callback'))
+            ->redirect();
     }
 
     // Tangkap data dari Google setelah login berhasil
     public function handleGoogleCallback()
     {
         try {
-            $user = Socialite::driver('google')->user();
+            $user = Socialite::driver('google')
+                ->redirectUrl(url('/auth/google/callback'))
+                ->user();
             
             // Cek apakah user sudah ada, kalau belum bikin baru
             $finduser = User::updateOrCreate(
